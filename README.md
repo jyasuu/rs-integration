@@ -19,3 +19,9 @@ cargo run --bin kafka_consumer
 cargo install hurl
 hurl --test hurl/test.hurl
 ```
+
+## clap
+
+```sh
+cargo run --bin clap -- 123 -ddd test -l
+```
