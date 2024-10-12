@@ -11,3 +11,11 @@ docker compose exec broker /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-
 cargo run --bin kafka_producer
 cargo run --bin kafka_consumer
 ```
+
+
+## hurl
+
+```sh
+cargo install hurl
+hurl --test hurl/test.hurl
+```
