@@ -2,15 +2,19 @@ use tracing::{debug, error, trace};
 use tracing_subscriber::filter::LevelFilter;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
-use std::process;
+use std::time::Duration;
+use std::{process, thread};
 use url::Url;
+use tokio::sync::mpsc;
+use tokio::task;
+
 
 #[tokio::main]
 async fn main() -> Result<(), tracing_loki::Error> {
     let (layer, task) = tracing_loki::builder()
         .label("host", "mine")?
         .extra_field("pid", format!("{}", process::id()))?
-        .build_url(Url::parse("http://localhost:3100").unwrap())?;
+        .build_url(Url::parse("http://127.0.0.1:3100").unwrap())?;
 
     // We need to register our layer with `tracing`.
     tracing_subscriber::registry()
@@ -56,6 +60,33 @@ async fn main() -> Result<(), tracing_loki::Error> {
     error!(name: "invalid_input", "Invalid input: {}", err_info);
 
 
+    let (tx_a, mut rx_a) = mpsc::channel(1);
+    let (tx_b, mut rx_b) = mpsc::channel(1);
+
+    // 初始時啟動 A
+    tx_a.send(()).await.unwrap();
+    
+    let handle_a = task::spawn(async move  {
+        for _ in 0..50 {
+            rx_a.recv().await;
+            tracing::info!("A");
+            thread::sleep(Duration::from_secs(1));
+            tx_b.send(()).await.unwrap(); 
+        }
+    });
+
+    let handle_b = task::spawn(async move  {
+        for _ in 0..50 {
+            rx_b.recv().await;
+            tracing::info!("B");
+            thread::sleep(Duration::from_secs(1));
+            tx_a.send(()).await.unwrap(); 
+        }
+    });
+
+
+    handle_a.await.unwrap();
+    handle_b.await.unwrap();
 
 
     Ok(())
