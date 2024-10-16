@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.5.20", features = ["derive"] }
 kafka = "0.10.0"
+redis = "0.27.4"
 tokio = { version = "1.40.0", features = ["full"] }
 tracing = "0.1.40"
 tracing-loki = "0.2.5"

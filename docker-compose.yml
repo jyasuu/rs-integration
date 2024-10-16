@@ -56,3 +56,7 @@ services:
     image: grafana/grafana:latest
     ports:
       - "3000:3000"
+  redis:
+    image: 'redis:latest'
+    ports:
+      - '6379:6379'
