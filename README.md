@@ -34,4 +34,22 @@ docker run -it --rm --name rabbitmq -p 5552:5552 -p 15672:15672 -p 5672:5672  \
     rabbitmq:3.13    
 
 docker exec rabbitmq rabbitmq-plugins enable rabbitmq_stream rabbitmq_stream_management 
+
+cargo run --bin rabbitmq_lapin_receive
+cargo run --bin rabbitmq_lapin_send
+
+cargo run --bin rabbitmq_lapin_worker
+cargo run --bin rabbitmq_lapin_new_task "hi" # specify a custom message
+
+cargo run --bin rabbitmq_lapin_receive_logs
+cargo run --bin rabbitmq_lapin_emit_log "hi" # specify a custom message
+
+cargo run --bin rabbitmq_lapin_receive_logs_direct info error # specify log levels
+cargo run --bin rabbitmq_lapin_emit_log_direct error "help!" # specify severity and custom message
+
+cargo run --bin rabbitmq_lapin_receive_logs_topic kern.* # specify topic filter
+cargo run --bin rabbitmq_lapin_emit_log_topic kern.mem "No memory left!" # specify topic and message
+
+cargo run --bin rabbitmq_lapin_rpc_server
+cargo run --bin rabbitmq_lapin_rpc_client
 ```
