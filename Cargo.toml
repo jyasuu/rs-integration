@@ -3,10 +3,11 @@ resolver = "2"
 members = [
     "clap",
     "kafka",
-    "loki",
+    "loki", "mongodb",
     "nanoid",
     "rabbitmq",
     "redis",
+    "mongodb",
 ]
 default-members = [
     "clap",
@@ -15,6 +16,7 @@ default-members = [
     "nanoid",
     "rabbitmq",
     "redis",
+    "mongodb",
 ]
 
 
