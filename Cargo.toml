@@ -9,8 +9,12 @@ members = [
     "redis",
 ]
 default-members = [
+    "clap",
+    "kafka",
     "loki",
-    "nanoid"
+    "nanoid",
+    "rabbitmq",
+    "redis",
 ]
 
 
