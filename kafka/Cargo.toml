@@ -1,0 +1,16 @@
+[package]
+name = "kafka"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "kafka_consumer_test"
+path = "bin/kafka_consumer.rs"
+[[bin]]
+name = "kafka_producer_test"
+path = "bin/kafka_producer.rs"
+
+
+
+[dependencies]
+kafka.workspace = true

@@ -1,0 +1,12 @@
+[package]
+name = "clap"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "clap_test"
+path = "bin/clap.rs"
+
+
+[dependencies]
+clap.workspace = true

@@ -1,0 +1,11 @@
+[package]
+name = "nanoid"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "nanoid_test"
+path = "bin/nanoid.rs"
+
+[dependencies]
+nanoid.workspace = true

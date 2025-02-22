@@ -1,0 +1,13 @@
+[package]
+name = "redis"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "redis_test"
+path = "bin/redis.rs"
+
+
+
+[dependencies]
+redis.workspace = true

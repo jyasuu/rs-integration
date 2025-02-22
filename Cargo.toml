@@ -1,9 +1,21 @@
-[package]
-name = "rs-integration"
-version = "0.1.0"
-edition = "2021"
+[workspace]
+resolver = "2"
+members = [
+    "clap",
+    "kafka",
+    "loki",
+    "nanoid",
+    "rabbitmq",
+    "redis",
+]
+default-members = [
+    "loki",
+    "nanoid"
+]
 
-[dependencies]
+
+
+[workspace.dependencies]
 clap = { version = "4.5.20", features = ["derive"] }
 futures = "0.3.31"
 kafka = "0.10.0"

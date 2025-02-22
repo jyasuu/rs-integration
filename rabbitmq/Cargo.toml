@@ -1,0 +1,64 @@
+[package]
+name = "rabbitmq"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "rabbitmq_lapin_emit_log_direct"
+path = "bin/rabbitmq_lapin_emit_log_direct.rs"
+[[bin]]
+name = "rabbitmq_lapin_emit_log"
+path = "bin/rabbitmq_lapin_emit_log.rs"
+[[bin]]
+name = "rabbitmq_lapin_emit_log_topic"
+path = "bin/rabbitmq_lapin_emit_log_topic.rs"
+[[bin]]
+name = "rabbitmq_lapin_logs_direct"
+path = "bin/rabbitmq_lapin_logs_direct.rs"
+[[bin]]
+name = "rabbitmq_lapin_new_task"
+path = "bin/rabbitmq_lapin_new_task.rs"
+[[bin]]
+name = "rabbitmq_lapin_receive_logs_direct"
+path = "bin/rabbitmq_lapin_receive_logs_direct.rs"
+[[bin]]
+name = "rabbitmq_lapin_receive_logs"
+path = "bin/rabbitmq_lapin_receive_logs.rs"
+[[bin]]
+name = "rabbitmq_lapin_receive_logs_topic"
+path = "bin/rabbitmq_lapin_receive_logs_topic.rs"
+[[bin]]
+name = "rabbitmq_lapin_receive"
+path = "bin/rabbitmq_lapin_receive.rs"
+[[bin]]
+name = "rabbitmq_lapin_rpc_client"
+path = "bin/rabbitmq_lapin_rpc_client.rs"
+[[bin]]
+name = "rabbitmq_lapin_rpc_server"
+path = "bin/rabbitmq_lapin_rpc_server.rs"
+[[bin]]
+name = "rabbitmq_lapin_send"
+path = "bin/rabbitmq_lapin_send.rs"
+[[bin]]
+name = "rabbitmq_lapin_worker"
+path = "bin/rabbitmq_lapin_worker.rs"
+[[bin]]
+name = "rabbitmq_receive_offset_tracking"
+path = "bin/rabbitmq_receive_offset_tracking.rs"
+[[bin]]
+name = "rabbitmq_receive"
+path = "bin/rabbitmq_receive.rs"
+[[bin]]
+name = "rabbitmq_send_offset_tracking"
+path = "bin/rabbitmq_send_offset_tracking.rs"
+[[bin]]
+name = "rabbitmq_send"
+path = "bin/rabbitmq_send.rs"
+
+[dependencies]
+lapin.workspace = true
+rabbitmq-stream-client.workspace = true
+tokio.workspace = true
+tokio-stream.workspace = true
+futures.workspace = true
+uuid.workspace = true

@@ -15,7 +15,7 @@ fn main() {
      for m in ms.messages() {
        println!("{:?}", m);
      }
-     consumer.consume_messageset(ms);
+     let _ = consumer.consume_messageset(ms);
    }
    consumer.commit_consumed().unwrap();
  }

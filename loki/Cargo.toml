@@ -1,0 +1,18 @@
+[package]
+name = "loki"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "loki_test"
+path = "bin/loki.rs"
+
+
+
+[dependencies]
+tokio.workspace = true
+tokio-stream.workspace = true
+tracing.workspace = true
+tracing-loki.workspace = true
+tracing-subscriber.workspace = true
+url.workspace = true

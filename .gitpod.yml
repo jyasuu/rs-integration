@@ -6,6 +6,6 @@
 
 tasks:
   - init: cargo build
-    command: cargo watch -x 'run --bin loki'
+    command: cargo watch -x 'check --workspace'
 
 
