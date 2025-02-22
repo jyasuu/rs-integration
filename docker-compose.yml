@@ -67,3 +67,36 @@ services:
       - 'RABBITMQ_DEFAULT_USER=guest'
     ports:
       - '5672:5672'
+  postgres:
+      image: postgres
+      restart: always
+      environment:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          PGDATA: /var/lib/postgresql/data
+      volumes:
+          - db-data:/var/lib/postgresql/data
+      ports:
+          - "5432:5432"
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+        - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_BASICAUTH: false
+      
+volumes:
+    db-data:
