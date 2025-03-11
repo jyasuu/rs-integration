@@ -7,7 +7,8 @@ members = [
     "nanoid",
     "rabbitmq",
     "redis",
-    "mongodb",
+    "mongodb", 
+    "gelf-log",
 ]
 default-members = [
     "clap",
@@ -17,6 +18,7 @@ default-members = [
     "rabbitmq",
     "redis",
     "mongodb",
+    "gelf-log",
 ]
 
 

@@ -1,0 +1,15 @@
+[package]
+name = "gelf-log"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "gelf"
+path = "bin/gelf.rs"
+[[bin]]
+name = "gelf_log_test"
+path = "bin/gelf_log_test.rs"
+
+[dependencies]
+gelf = "0.5.0"
+log = "0.4.26"
