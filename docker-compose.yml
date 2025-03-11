@@ -97,6 +97,17 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
       ME_CONFIG_BASICAUTH: false
+  memcached:
+    image: memcached
+    restart: always
+    ports:
+        - "11211:11211"
+        - "12345:12345"
+    command:
+      - --conn-limit=1024
+      - --memory-limit=64
+      - --threads=4
+
       
 volumes:
     db-data:

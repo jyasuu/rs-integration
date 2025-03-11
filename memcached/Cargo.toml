@@ -1,0 +1,11 @@
+[package]
+name = "memcached"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "memcached"
+path = "bin/memcached.rs"
+
+[dependencies]
+memcache = "0.18.0"
