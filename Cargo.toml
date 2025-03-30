@@ -9,7 +9,9 @@ members = [
     "redis",
     "mongodb", 
     "gelf-log", 
-    "memcached",
+    "memcached", 
+    "mcp-client", 
+    "mcp-server",
 ]
 default-members = [
     "clap",
@@ -21,6 +23,8 @@ default-members = [
     "mongodb",
     "gelf-log",
     "memcached",
+    "mcp-client",
+    "mcp-server",
 ]
 
 

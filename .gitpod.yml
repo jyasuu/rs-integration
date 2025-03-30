@@ -6,6 +6,9 @@
 
 tasks:
   - init: cargo build
-    command: cargo watch -x 'check --workspace'
-
+    command: |
+        pip install uvx
+        rustup update 1.85.1
+        rustup default 1.85.1
+        cargo watch -x 'check --workspace'
 
