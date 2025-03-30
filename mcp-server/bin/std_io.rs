@@ -4,6 +4,7 @@ use rmcp::{ServiceExt, transport::stdio};
 use tracing_subscriber::{self, EnvFilter};
 mod common;
 /// npx @modelcontextprotocol/inspector cargo run -p mcp-server-examples --example std_io
+/// npx @modelcontextprotocol/inspector cargo run --bin mcp_server_std_io
 #[tokio::main]
 async fn main() -> Result<()> {
     // Initialize the tracing subscriber with file and stdout logging
