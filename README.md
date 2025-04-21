@@ -53,3 +53,13 @@ cargo run --bin rabbitmq_lapin_emit_log_topic kern.mem "No memory left!" # speci
 cargo run --bin rabbitmq_lapin_rpc_server
 cargo run --bin rabbitmq_lapin_rpc_client
 ```
+
+
+## elasticsearch
+
+```rs
+wget https://archive.org/download/stackexchange/stackoverflow.com-Posts.7z
+wget https://archive.org/download/stackexchange-snapshot-2018-03-14/stackoverflow.com-Posts.7z
+./target/debug/index_questions_answers --path Posts.xml
+
+```
