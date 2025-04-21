@@ -1,0 +1,13 @@
+[package]
+name = "elasticsearch"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "elasticsearch_query"
+path = "bin/elasticsearch_query.rs"
+
+[dependencies]
+elasticsearch.workspace = true
+serde_json = "1.0.140"
+tokio.workspace = true
