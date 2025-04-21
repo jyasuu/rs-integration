@@ -107,7 +107,40 @@ services:
       - --conn-limit=1024
       - --memory-limit=64
       - --threads=4
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.1
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    volumes:
+      - ./init/elasticsearch:/usr/share/elasticsearch/init
+      - esdata:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      
+  # --- Added Kibana Service ---
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.7.1 # Use the same version as Elasticsearch
+    ports:
+      - "5601:5601" # Default Kibana port
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200 # Connect to ES using service name
+    depends_on:
+      elasticsearch:
+        condition: service_healthy # Wait for Elasticsearch to be ready
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5601/api/status"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
       
 volumes:
-    db-data:
+  db-data:
+  esdata:
