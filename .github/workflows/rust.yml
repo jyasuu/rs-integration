@@ -16,6 +16,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    # Install specific Rust version and set as default
+    - name: Install Rust 1.85.1
+      run: rustup install 1.85.1
+    - name: Set default Rust version
+      run: rustup default 1.85.1
+
     - name: Build
       run: cargo build --verbose
     - name: Run tests
