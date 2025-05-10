@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package example;
+
+// Scalar Types
+message BasicTypes {
+  int32 i32_val = 1;
+  int64 i64_val = 2;
+  uint32 u32_val = 3;
+  uint64 u64_val = 4;
+  float f32_val = 5;
+  double f64_val = 6;
+  bool bool_val = 7;
+  string string_val = 8;
+  bytes bytes_val = 9;
+}
+
+// Complex Types
+message ComplexTypes {
+  repeated string repeated_str = 1;          // Vec<String>
+  map<string, int32> map_values = 2;         // HashMap<String, i32>
+  Status status = 3;                         // Enum
+  NestedMessage nested = 4;                  // Nested message
+  oneof content {                            // Rust enum
+    string text_content = 5;
+    bytes binary_content = 6;
+  }
+}
+
+enum Status {
+  UNKNOWN = 0;
+  PENDING = 1;
+  COMPLETED = 2;
+}
+
+message NestedMessage {
+  string nested_field = 1;
+}
+
+service ExampleService {
+  rpc ProcessData(ComplexTypes) returns (BasicTypes);
+}

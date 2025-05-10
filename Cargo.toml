@@ -13,7 +13,8 @@ members = [
     "mcp-client", 
     "mcp-server", 
     "elasticsearch", 
-    "sqlite",
+    "sqlite", 
+    "grpc",
 ]
 default-members = [
     "clap",
@@ -29,6 +30,7 @@ default-members = [
     "mcp-server",
     "elasticsearch",
     "sqlite",
+    "grpc",
 ]
 
 
