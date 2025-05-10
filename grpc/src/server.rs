@@ -16,6 +16,7 @@ impl ExampleService for MyExampleService {
         request: Request<ComplexTypes>,
     ) -> Result<Response<BasicTypes>, Status> {
         let req = request.into_inner();
+        println!("REQUEST={:?}", req);
 
         // Handle complex types
         let status = match req.status() {
