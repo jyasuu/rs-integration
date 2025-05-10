@@ -63,3 +63,14 @@ wget https://archive.org/download/stackexchange-snapshot-2018-03-14/stackoverflo
 ./target/debug/index_questions_answers --path Posts.xml
 
 ```
+
+
+## mcp
+
+https://github.com/modelcontextprotocol/inspector?tab=readme-ov-file#configuration
+
+```sh
+MCP_PROXY_FULL_ADDRESS=https://6277-jyasuu-rsintegration-g6bec4xgw4j.ws-us118.gitpod.io
+npx -y @modelcontextprotocol/inspector 
+https://8000-jyasuu-rsintegration-g6bec4xgw4j.ws-us118.gitpod.io
+```

@@ -17,8 +17,10 @@ pub struct StructRequest {
 pub struct Counter {
     counter: Arc<Mutex<i32>>,
 }
+
 #[tool(tool_box)]
 impl Counter {
+    #[allow(dead_code)]
     pub fn new() -> Self {
         Self {
             counter: Arc::new(Mutex::new(0)),
@@ -98,7 +100,7 @@ impl ServerHandler for Counter {
 
     async fn list_resources(
         &self,
-        _request: PaginatedRequestParam,
+        _request: Option<PaginatedRequestParam>,
         _: RequestContext<RoleServer>,
     ) -> Result<ListResourcesResult, McpError> {
         Ok(ListResourcesResult {
@@ -139,14 +141,14 @@ impl ServerHandler for Counter {
 
     async fn list_prompts(
         &self,
-        _request: PaginatedRequestParam,
+        _request: Option<PaginatedRequestParam>,
         _: RequestContext<RoleServer>,
     ) -> Result<ListPromptsResult, McpError> {
         Ok(ListPromptsResult {
             next_cursor: None,
             prompts: vec![Prompt::new(
                 "example_prompt",
-                Some("This is an example prompt that takes one required agrument, message"),
+                Some("This is an example prompt that takes one required argument, message"),
                 Some(vec![PromptArgument {
                     name: "message".to_string(),
                     description: Some("A message to put in the prompt".to_string()),
@@ -164,14 +166,13 @@ impl ServerHandler for Counter {
         match name.as_str() {
             "example_prompt" => {
                 let message = arguments
-                    .and_then(
-                        |json|
-                            json.get("message")
-                                ?.as_str()
-                                .map(|s| s.to_string()))
-                    .ok_or_else(|| McpError::invalid_params("No message provided to example_prompt", None))?;
+                    .and_then(|json| json.get("message")?.as_str().map(|s| s.to_string()))
+                    .ok_or_else(|| {
+                        McpError::invalid_params("No message provided to example_prompt", None)
+                    })?;
 
-                let prompt = format!("This is an example prompt with your message here: '{message}'");
+                let prompt =
+                    format!("This is an example prompt with your message here: '{message}'");
                 Ok(GetPromptResult {
                     description: None,
                     messages: vec![PromptMessage {
@@ -186,12 +187,25 @@ impl ServerHandler for Counter {
 
     async fn list_resource_templates(
         &self,
-        _request: PaginatedRequestParam,
+        _request: Option<PaginatedRequestParam>,
         _: RequestContext<RoleServer>,
     ) -> Result<ListResourceTemplatesResult, McpError> {
         Ok(ListResourceTemplatesResult {
             next_cursor: None,
             resource_templates: Vec::new(),
         })
+    }
+
+    async fn initialize(
+        &self,
+        _request: InitializeRequestParam,
+        context: RequestContext<RoleServer>,
+    ) -> Result<InitializeResult, McpError> {
+        if let Some(http_request_part) = context.extensions.get::<axum::http::request::Parts>() {
+            let initialize_headers = &http_request_part.headers;
+            let initialize_uri = &http_request_part.uri;
+            tracing::info!(?initialize_headers, %initialize_uri, "initialize from http server");
+        }
+        Ok(self.get_info())
     }
 }
