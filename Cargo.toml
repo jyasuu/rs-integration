@@ -12,7 +12,8 @@ members = [
     "memcached", 
     "mcp-client", 
     "mcp-server", 
-    "elasticsearch",
+    "elasticsearch", 
+    "sqlite",
 ]
 default-members = [
     "clap",
@@ -27,6 +28,7 @@ default-members = [
     "mcp-client",
     "mcp-server",
     "elasticsearch",
+    "sqlite",
 ]
 
 
@@ -47,3 +49,4 @@ tracing-subscriber = "0.3.18"
 url = "2.5.2"
 uuid = { version = "1.11.0", features = ["v4"] }
 elasticsearch = "8.17.0-alpha.1"
+sqlite = "0.37.0"
