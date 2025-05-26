@@ -8,6 +8,7 @@ tasks:
   - init: |
         rustup update 1.85.1
         rustup default 1.85.1
+        sudo apt update && sudo apt install -y protobuf-compiler
         cargo build
     command: |
         pip install uvx
