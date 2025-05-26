@@ -22,6 +22,8 @@ jobs:
       run: rustup install 1.85.1
     - name: Set default Rust version
       run: rustup default 1.85.1
+    - name: Install protobuf
+      run: sudo apt update && sudo apt install -y protobuf-compiler
 
     - name: Build
       run: cargo build --verbose
