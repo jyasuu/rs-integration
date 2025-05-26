@@ -36,5 +36,5 @@ jobs:
         path: |
           target/debug/
           !target/debug/*.d
-          !target/debug/**/*
+          !target/debug/*/*
 
