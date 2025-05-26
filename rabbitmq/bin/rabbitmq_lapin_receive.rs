@@ -7,11 +7,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let conn = Connection::connect(addr, ConnectionProperties::default()).await?;
     let channel = conn.create_channel().await?;
 
+    let mut arguments =  FieldTable::default();
+    arguments.insert(String::from("x-max-priority").into(), lapin::types::AMQPValue::ShortShortUInt(5));
+
     channel
         .queue_declare(
             "hello",
             QueueDeclareOptions::default(),
-            FieldTable::default(),
+            arguments,
         )
         .await?;
 
