@@ -18,10 +18,10 @@ jobs:
     - uses: actions/checkout@v4
 
     # Install specific Rust version and set as default
-    - name: Install Rust 1.85.1
-      run: rustup install 1.85.1
+    - name: Install Rust 1.86.0
+      run: rustup install 1.86.0
     - name: Set default Rust version
-      run: rustup default 1.85.1
+      run: rustup default 1.86.0
     - name: Install protobuf
       run: sudo apt update && sudo apt install -y protobuf-compiler
 
