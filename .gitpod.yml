@@ -6,14 +6,14 @@
 
 tasks:
   - init: |
-        rustup update 1.85.1
-        rustup default 1.85.1
+        rustup update 1.86.0
+        rustup default 1.86.0
         sudo apt update && sudo apt install -y protobuf-compiler
         cargo build
     command: |
         pip install uvx
-        rustup update 1.85.1
-        rustup default 1.85.1
+        rustup update 1.86.0
+        rustup default 1.86.0
         sudo apt update && sudo apt install -y protobuf-compiler
         sudo gpg -k
         sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69

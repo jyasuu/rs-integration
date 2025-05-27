@@ -54,6 +54,9 @@ path = "bin/rabbitmq_send_offset_tracking.rs"
 [[bin]]
 name = "rabbitmq_send"
 path = "bin/rabbitmq_send.rs"
+[[bin]]
+name = "rabbitmq_lapin_dead_letter"
+path = "bin/rabbitmq_lapin_dead_letter.rs"
 
 [dependencies]
 lapin.workspace = true
