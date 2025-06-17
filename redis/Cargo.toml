@@ -11,3 +11,4 @@ path = "bin/redis.rs"
 
 [dependencies]
 redis.workspace = true
+uuid.workspace = true
