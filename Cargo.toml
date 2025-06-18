@@ -15,7 +15,8 @@ members = [
     "elasticsearch", 
     "sqlite", 
     "grpc", 
-    "graphql",
+    "graphql", 
+    "rust-tui-app",
 ]
 default-members = [
     "clap",
@@ -33,6 +34,7 @@ default-members = [
     "sqlite",
     "grpc",
     "graphql",
+    "rust-tui-app",
 ]
 
 
