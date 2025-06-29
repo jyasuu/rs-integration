@@ -96,7 +96,7 @@ impl RedissonLock {
     pub fn unlock(&self) -> RedisResult<bool> {
         let mut conn = self.client.get_connection()?;
         let lock_key = format!("lock:{}", self.lock_name);
-        let current_thread_id = thread::current().id();
+        let _current_thread_id = thread::current().id();
         
         // Lua script to safely release lock only if owned by current client
         let lua_script = r#"

@@ -27,7 +27,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         "title": "Parasite",
         "year": 2020,
         "plot": "A poor family, the Kims, con their way into becoming the servants of a rich family, the Parks. But their easy life gets complicated when their deception is threatened with exposure.",
-        "released": Utc.ymd(2020, 2, 7).and_hms(0, 0, 0),
+        "released": Utc.with_ymd_and_hms(2020, 2, 7, 0, 0, 0).single().unwrap(),
     };
     println!("New Document: {}", new_doc);
     let insert_result = movies.insert_one(new_doc.clone(), None)?;

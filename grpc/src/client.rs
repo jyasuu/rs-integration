@@ -1,4 +1,4 @@
-use example::{example_service_client::ExampleServiceClient, BasicTypes, ComplexTypes, NestedMessage, Status};
+use example::{example_service_client::ExampleServiceClient, ComplexTypes, NestedMessage, Status};
 use std::collections::HashMap;
 
 mod example {
