@@ -183,6 +183,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore]
     fn test_is_held_by_current_thread() {
         // Note: This test requires a running Redis instance
         let lock = RedissonLock::new("redis://127.0.0.1/", "test_lock", 10000)
@@ -214,6 +215,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore]
     fn test_lock_expiration() {
         let lock = RedissonLock::new("redis://127.0.0.1/", "test_expiration", 100)
             .expect("Failed to create lock");
@@ -233,6 +235,7 @@ mod tests {
     /// Test equivalent to: all_ok_with_embed_redis_when_use_lock_in_the_same_thread
     /// Note: Requires Redis running on localhost:6379
     #[test]
+    #[ignore]
     fn test_all_ok_when_use_lock_in_the_same_thread() {
         let repository = RedisLockRepository::new("redis://127.0.0.1:6379/");
 
@@ -258,6 +261,7 @@ mod tests {
     /// Test equivalent to: all_ok_with_embed_redis_when_use_lock_between_two_thread
     /// Note: Requires Redis running on localhost:6379
     #[test]
+    #[ignore]
     fn test_all_ok_when_use_lock_between_two_threads() {
         let redis_url = "redis://127.0.0.1:6379/";
         let lock_name = "MY_LOCK_MULTI_THREAD";
@@ -309,6 +313,7 @@ mod tests {
 
     /// Test isHeldByCurrentThread behavior across threads
     #[test]
+    #[ignore]
     fn test_is_held_by_current_thread_across_threads() {
         let redis_url = "redis://127.0.0.1:6379/";
         let lock_name = "THREAD_SPECIFIC_LOCK";
@@ -342,6 +347,7 @@ mod tests {
 
     /// Test concurrent lock attempts with detailed verification
     #[test]
+    #[ignore]
     fn test_concurrent_lock_attempts_with_verification() {
         let redis_url = "redis://127.0.0.1:6379/";
         let lock_name = "CONCURRENT_TEST_LOCK";
@@ -402,6 +408,7 @@ mod tests {
 
     /// Test lock expiration and reacquisition behavior
     #[test]
+    #[ignore]
     fn test_lock_expiration_and_reacquisition() {
         let redis_url = "redis://127.0.0.1:6379/";
         let lock_name = "EXPIRATION_TEST_LOCK";
