@@ -142,7 +142,7 @@ services:
 
 
 #  elasticsearch:
-#    image: repo.pouchen.com/docker-proxy-group/library/elasticsearch:9.1.2
+#    image: elasticsearch:9.1.2
 #    environment:
 #      - discovery.type=single-node
 #      - ES_JAVA_OPTS=-Xms1g -Xmx1g
@@ -152,18 +152,19 @@ services:
 #    volumes:
 #      - ./init/elasticsearch:/usr/share/elasticsearch/init
 #      - /data/elasticsearch:/usr/share/elasticsearch/data
-#    network_mode: "host"
+#    # network_mode: "host"
 #    healthcheck:
 #      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
 #      interval: 10s
 #      timeout: 5s
 #      retries: 5
 #  kibana:
-#    image: repo.pouchen.com/docker-proxy-group/library/kibana:9.1.2 # Use the same version as Elasticsearch
+#    image: rkibana:9.1.2 # Use the same version as Elasticsearch
 #    ports:
 #      - "5601:5601" # Default Kibana port
 #    environment:
-#      ELASTICSEARCH_HOSTS: http://elasticsearch:9200 # Connect to ES using service name
+#      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200 # Connect to ES using service name
+#      - xpack.security.enabled=false
 #    depends_on:
 #      elasticsearch:
 #        condition: service_healthy # Wait for Elasticsearch to be ready
