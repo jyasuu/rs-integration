@@ -57,6 +57,12 @@ path = "bin/rabbitmq_send.rs"
 [[bin]]
 name = "rabbitmq_lapin_dead_letter"
 path = "bin/rabbitmq_lapin_dead_letter.rs"
+[[bin]]
+name = "rabbitmq_lapin_batch_reader"
+path = "bin/rabbitmq_lapin_batch_reader.rs"
+[[bin]]
+name = "rabbitmq_lapin_batch_producer"
+path = "bin/rabbitmq_lapin_batch_producer.rs"
 
 [dependencies]
 lapin.workspace = true
