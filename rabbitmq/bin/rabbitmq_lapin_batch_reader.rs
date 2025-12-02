@@ -6,7 +6,7 @@ use lapin::{
 };
 use std::collections::VecDeque;
 use std::time::Duration;
-use tokio::time::{interval, timeout};
+use tokio::time::interval;
 
 /// Batch configuration for RabbitMQ consumer
 #[derive(Debug, Clone)]
@@ -26,12 +26,21 @@ impl Default for BatchConfig {
     }
 }
 
-/// A message wrapper that includes delivery information
+/// A message wrapper that includes delivery information and original delivery for ACKing
 #[derive(Debug)]
 pub struct BatchMessage {
     pub data: Vec<u8>,
     pub delivery_tag: u64,
     pub routing_key: String,
+    pub delivery: lapin::message::Delivery,
+}
+
+/// Results from processing a batch of messages
+#[derive(Debug)]
+pub enum BatchProcessResult {
+    Success,
+    PartialFailure(Vec<u64>), // delivery_tags of failed messages
+    TotalFailure,
 }
 
 /// Batch processor for RabbitMQ messages
@@ -63,7 +72,7 @@ impl BatchProcessor {
         self.buffer.is_empty()
     }
 
-    /// Drain the buffer and return all messages
+    /// Drain the buffer and return all messages with their original delivery objects
     pub fn drain_batch(&mut self) -> Vec<BatchMessage> {
         let messages: Vec<BatchMessage> = self.buffer
             .drain(..)
@@ -71,45 +80,100 @@ impl BatchProcessor {
                 data: delivery.data.clone(),
                 delivery_tag: delivery.delivery_tag,
                 routing_key: delivery.routing_key.as_str().to_string(),
+                delivery,
             })
             .collect();
 
         messages
     }
 
-    /// Process a batch of messages and optionally ACK them
+    /// Process a batch of messages with proper ACK/NACK handling
     pub async fn process_batch<F, Fut>(
         &mut self,
-        channel: &lapin::Channel,
+        _channel: &lapin::Channel,
         mut processor: F,
     ) -> Result<(), Box<dyn std::error::Error>>
     where
-        F: FnMut(Vec<BatchMessage>) -> Fut,
-        Fut: std::future::Future<Output = Result<(), Box<dyn std::error::Error>>>,
+        F: FnMut(&[BatchMessage]) -> Fut,
+        Fut: std::future::Future<Output = Result<BatchProcessResult, Box<dyn std::error::Error>>>,
     {
         if self.is_empty() {
             return Ok(());
         }
 
         let messages = self.drain_batch();
-        let last_delivery_tag = messages.last().map(|m| m.delivery_tag);
+        let message_count = messages.len();
 
         // Process the batch
-        match processor(messages).await {
-            Ok(_) => {
-                // If processing succeeded and auto_ack is enabled, ACK all messages
+        match processor(&messages).await {
+            Ok(BatchProcessResult::Success) => {
+                // ACK all messages individually or as a batch
                 if self.config.auto_ack {
-                    if let Some(tag) = last_delivery_tag {
-                        channel
-                            .basic_ack(tag, BasicAckOptions { multiple: true })
+                    // Use batch ACK for efficiency when auto_ack is true
+                    if let Some(last_message) = messages.last() {
+                        last_message.delivery
+                            .ack(BasicAckOptions { multiple: true })
                             .await?;
-                        println!("✅ Batch ACK'd up to delivery tag: {}", tag);
+                        println!("✅ Batch ACK'd {} messages up to delivery tag: {}", 
+                                message_count, last_message.delivery_tag);
                     }
+                } else {
+                    // ACK each message individually when auto_ack is false for better control
+                    for message in &messages {
+                        message.delivery
+                            .ack(BasicAckOptions { multiple: false })
+                            .await?;
+                    }
+                    println!("✅ Individually ACK'd {} messages", message_count);
                 }
             }
+            Ok(BatchProcessResult::PartialFailure(failed_tags)) => {
+                // ACK successful messages, NACK failed ones
+                for message in &messages {
+                    if failed_tags.contains(&message.delivery_tag) {
+                        // NACK and requeue failed messages
+                        message.delivery
+                            .nack(BasicNackOptions { 
+                                multiple: false, 
+                                requeue: true 
+                            })
+                            .await?;
+                        println!("❌ NACK'd message with delivery tag: {}", message.delivery_tag);
+                    } else {
+                        // ACK successful messages
+                        message.delivery
+                            .ack(BasicAckOptions { multiple: false })
+                            .await?;
+                    }
+                }
+                println!("✅ Partial batch processed: {} succeeded, {} failed", 
+                        message_count - failed_tags.len(), failed_tags.len());
+            }
+            Ok(BatchProcessResult::TotalFailure) => {
+                // NACK all messages and requeue them
+                for message in &messages {
+                    message.delivery
+                        .nack(BasicNackOptions { 
+                            multiple: false, 
+                            requeue: true 
+                        })
+                        .await?;
+                }
+                println!("❌ Total batch failure: NACK'd and requeued {} messages", message_count);
+            }
             Err(e) => {
-                println!("❌ Batch processing failed: {}", e);
-                // Could implement retry logic or dead letter handling here
+                println!("❌ Batch processing error: {}", e);
+                // NACK all messages on processing error
+                for message in &messages {
+                    if let Err(nack_err) = message.delivery
+                        .nack(BasicNackOptions { 
+                            multiple: false, 
+                            requeue: true 
+                        })
+                        .await {
+                        println!("⚠️ Failed to NACK message {}: {}", message.delivery_tag, nack_err);
+                    }
+                }
                 return Err(e);
             }
         }
@@ -140,8 +204,8 @@ impl BatchConsumer {
         message_processor: F,
     ) -> Result<(), Box<dyn std::error::Error>>
     where
-        F: FnMut(Vec<BatchMessage>) -> Fut + Clone,
-        Fut: std::future::Future<Output = Result<(), Box<dyn std::error::Error>>>,
+        F: FnMut(&[BatchMessage]) -> Fut + Clone,
+        Fut: std::future::Future<Output = Result<BatchProcessResult, Box<dyn std::error::Error>>>,
     {
         // Create consumer
         let mut consumer = self
@@ -223,30 +287,67 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         )
         .await?;
 
-    // Configure batch processing
+    // Configure batch processing - demonstrate manual ACK control
+    let auto_ack = std::env::var("AUTO_ACK").unwrap_or_else(|_| "false".to_string()).parse().unwrap_or(false);
+    
     let batch_config = BatchConfig {
         max_batch_size: 5,
         max_wait_time: Duration::from_millis(1000),
-        auto_ack: true,
+        auto_ack,
     };
+
+    println!("🔧 Batch configuration: max_size={}, timeout={}ms, auto_ack={}", 
+             batch_config.max_batch_size, 
+             batch_config.max_wait_time.as_millis(), 
+             batch_config.auto_ack);
 
     // Create batch consumer
     let mut batch_consumer = BatchConsumer::new(channel, batch_config);
 
-    // Define message processor
-    let message_processor = |messages: Vec<BatchMessage>| async move {
-        println!("\n🔄 Processing batch of {} messages:", messages.len());
+    // Define message processor with proper result handling
+    let message_processor = |messages: &[BatchMessage]| {
+        let message_count = messages.len();
+        let mut failed_tags = Vec::new();
         
-        for (i, message) in messages.iter().enumerate() {
-            let content = String::from_utf8_lossy(&message.data);
-            println!("  {}. [{}] {}", i + 1, message.routing_key, content);
+        // Extract data we need to avoid lifetime issues
+        let message_data: Vec<(String, u64, String)> = messages.iter()
+            .map(|m| (
+                String::from_utf8_lossy(&m.data).to_string(),
+                m.delivery_tag,
+                m.routing_key.clone()
+            ))
+            .collect();
+        
+        async move {
+            println!("\n🔄 Processing batch of {} messages:", message_count);
+            
+            for (i, (content, delivery_tag, routing_key)) in message_data.iter().enumerate() {
+                println!("  {}. [{}] {}", i + 1, routing_key, content);
+                
+                // Simulate processing that might fail for some messages
+                // For demo: fail messages containing "error"
+                if content.to_lowercase().contains("error") {
+                    println!("    ❌ Processing failed for message {}", delivery_tag);
+                    failed_tags.push(*delivery_tag);
+                }
+            }
+            
+            // Simulate some processing work
+            tokio::time::sleep(Duration::from_millis(100)).await;
+            
+            let result = if failed_tags.is_empty() {
+                println!("✅ Batch processed successfully!\n");
+                BatchProcessResult::Success
+            } else if failed_tags.len() == message_count {
+                println!("❌ Total batch failure!\n");
+                BatchProcessResult::TotalFailure
+            } else {
+                println!("⚠️ Partial batch failure: {} failed out of {}\n", failed_tags.len(), message_count);
+                BatchProcessResult::PartialFailure(failed_tags)
+            };
+            
+            Ok::<BatchProcessResult, Box<dyn std::error::Error>>(result)
         }
-        
-        // Simulate some processing work
-        tokio::time::sleep(Duration::from_millis(100)).await;
-        
-        println!("✅ Batch processed successfully!\n");
-        Ok::<(), Box<dyn std::error::Error>>(())
     };
 
     // Start consuming
